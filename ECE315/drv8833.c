@@ -21,39 +21,32 @@ void  drv8833_gpioInit(void)
 	gpio_enable_port(GPIOE_BASE);
 	gpio_enable_port(GPIOF_BASE);
 	
-	//gpio_config_alternate_function(GPIOB_BASE, PB4|PB5);
-	//gpio_config_alternate_function(GPIOE_BASE, PE4|PE5);
+	gpio_config_alternate_function(GPIOB_BASE, PB4|PB5);
+	gpio_config_alternate_function(GPIOE_BASE, PE4|PE5);
 	
-	//gpio_config_port_control(GPIOE_BASE, GPIO_PCTL_PE4_M1PWM2 | GPIO_PCTL_PE5_M1PWM3);
-	//gpio_config_port_control(GPIOB_BASE, GPIO_PCTL_PB4_M0PWM2 | GPIO_PCTL_PB5_M0PWM3);
+	gpio_config_port_control(GPIOE_BASE, GPIO_PCTL_PE4_M1PWM2 | GPIO_PCTL_PE5_M1PWM3);
+	gpio_config_port_control(GPIOB_BASE, GPIO_PCTL_PB4_M0PWM2 | GPIO_PCTL_PB5_M0PWM3);
 
-	gpio_config_digital_enable(GPIOB_BASE, MTR_AIN1 | MTR_AIN2);
-	gpio_config_digital_enable(GPIOE_BASE, MTR_BIN1 | MTR_BIN2);
 	gpio_config_digital_enable(GPIOF_BASE, MTR_N_SLEEP | MTR_N_FAULT);
-	gpio_config_enable_output(GPIOB_BASE, MTR_AIN1 | MTR_AIN2);
-	gpio_config_enable_output(GPIOE_BASE, MTR_BIN1 | MTR_BIN2);
 	gpio_config_enable_output(GPIOF_BASE, MTR_N_SLEEP);
 	gpio_config_enable_input(GPIOF_BASE, MTR_N_FAULT);
 	
 	GPIOF->DATA = MTR_N_SLEEP;
-	GPIOB->DATA &= ~(MTR_AIN1 | MTR_AIN2);
-	GPIOE->DATA &= ~(MTR_BIN1 | MTR_BIN2);
+
 }
 
 //*****************************************************************************
 //*****************************************************************************
 void  drv8833_leftForward(uint8_t dutyCycle)
 {
-	GPIOE->DATA &= ~MTR_AIN2;
-  GPIOE->DATA |= MTR_AIN1;
+	pwmConfig(PWM0_BASE,1,10000,7000,7000,PWM_CHANNEL_LOW,PWM_GEN_ACTCMPBD_HIGH|PWM_GEN_ACTLOAD_HIGH|PWM_GEN_ACTZERO_HIGH);
 }
 
 //*****************************************************************************
 //*****************************************************************************
 void  drv8833_leftReverse(uint8_t dutyCycle)
 {
-	GPIOB->DATA &= MTR_AIN1;
-	GPIOB->DATA |= MTR_AIN2;
+	
 }
 
 
@@ -61,16 +54,14 @@ void  drv8833_leftReverse(uint8_t dutyCycle)
 //*****************************************************************************
 void  drv8833_rightForward(uint8_t dutyCycle)
 {
-	GPIOB->DATA &= MTR_BIN2;
-	GPIOB->DATA |= MTR_BIN1;
+
 }
 
 //*****************************************************************************
 //*****************************************************************************
 void  drv8833_rightReverse(uint8_t dutyCycle)
 {
-		GPIOB->DATA &= MTR_BIN1;
-		GPIOB->DATA |= MTR_BIN2;
+
 }
 
 //*****************************************************************************
