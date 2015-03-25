@@ -76,7 +76,7 @@ void serialDebugInit(void)
 void pw_config_gpio(void)
 {
 	gpio_enable_port(GPIOE_BASE);
-  gpio_config_digital_enable( GPIOE_BASE, PE0 | PE1 | PE2 | PE4 | PE5);
+  gpio_config_digital_enable( GPIOE_BASE, PE0 | PE1 | PE2);
 	gpio_config_enable_input(GPIOE_BASE, PE2 | PE3);
 	gpio_config_analog_enable(GPIOE_BASE, PE3);
 	gpio_config_open_drain(GPIOE_BASE, PE3);

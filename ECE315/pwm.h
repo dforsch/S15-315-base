@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "TM4C123GH6PM.h"
+#include "../include/sysctrl.h"
 
 #define PWM_GEN_ACTCMPBD_M         0x00000C00
 #define PWM_GEN_ACTCMPBD_NOTHING   0x00000000

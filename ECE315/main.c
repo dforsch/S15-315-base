@@ -31,6 +31,7 @@
 
 #include "TM4C123.h"
 #include "boardUtil.h"
+#include "drv8833.h"
 
 
 
@@ -49,6 +50,7 @@ void initializeBoard(void)
 	pw_config_gpio();
 	SysTick_Config(2500);
 	initializeADC(ADC0_BASE);
+	drv8833_gpioInit();
   EnableInterrupts();
 }
 
@@ -78,7 +80,8 @@ main(void)
   uartTxPoll(UART0_BASE,"**************************************\n\r");
   uartTxPoll(UART0_BASE,"* ECE315 Default Project\n\r");
   uartTxPoll(UART0_BASE,"**************************************\n\r");
-  
+	drv8833_leftForward(0);
+	drv8833_rightForward(0);
   // Infinite Loop
   while(1)
   {
@@ -95,7 +98,6 @@ main(void)
 			}
 			AlertSysTick = false;
 			systick_count++;
-			GPIOE->DATA ^= PE5;
 		}
 		
 		// Every second, 20000*50uS = 1s
@@ -110,7 +112,6 @@ main(void)
 			// inches = V / (9.8mV/in)
 			// V = adc_val / max_val * 5V
 			adc_val = (adc_val+0.0)/(4095/5*.0098);
-			GPIOE->DATA ^= PE4;
 		}
 		
 		// Every UART interrupt
