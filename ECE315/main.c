@@ -99,7 +99,7 @@ main(void)
 		}
 		
 		// Every second, 20000*50uS = 1s
-		if(systick_count > 20000){
+		if(systick_count >= 20000){
 			systick_count = 0;
 			sprintf(output_string,"Pulse:%03d ADC:%03d UART:%s\n\r", pw_val, adc_val, uart);
 			uartTxPoll(UART0_BASE,output_string);

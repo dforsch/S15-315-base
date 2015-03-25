@@ -1,3 +1,10 @@
+ECE315/obj/*
+ECE315/lst/*
+ECE315/*.bak
+ECE315/*uvguix.*
+ECE315/*.uvoptx
+ECE315/*.dep
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
