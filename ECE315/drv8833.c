@@ -21,6 +21,9 @@ void  drv8833_gpioInit(void)
 	gpio_enable_port(GPIOE_BASE);
 	gpio_enable_port(GPIOF_BASE);
 	
+	gpio_config_digital_enable(GPIOB_BASE, PB4|PB5);
+	gpio_config_digital_enable(GPIOE_BASE, PE4|PE5);
+	
 	gpio_config_alternate_function(GPIOB_BASE, PB4|PB5);
 	gpio_config_alternate_function(GPIOE_BASE, PE4|PE5);
 	
