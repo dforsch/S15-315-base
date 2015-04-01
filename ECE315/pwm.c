@@ -14,38 +14,10 @@ uint8_t pwmConfig(
   uint32_t genb
 )
 {
-	uint32_t rcgc_mask = 0;
-  uint32_t pr_mask = 0;
+
 	PWM0_Type* PWM;
   
-  // Verify that the base address and set rcgc_mask and pr_mask
-   switch( base )
-   {
-     case PWM0_BASE:
-     {
-       // ADD CODE
-       // Set rcgc_mask and pr_mask for GPIO Port A
-       rcgc_mask = SYSCTL_RCGCPWM_R0;
-			 pr_mask = SYSCTL_PRPWM_R0;
-       break;
-     }
-     case PWM1_BASE:
-     {
-       // ADD CODE
-       // Set rcgc_mask and pr_mask for GPIO Port B
-       rcgc_mask = SYSCTL_RCGCPWM_R1;
-			 pr_mask = SYSCTL_PRPWM_R1;
-       break;
-     }
 
-     default:
-     {
-       return false;
-     }
-   }
-	SYSCTL->RCGCPWM |= rcgc_mask;
-	while((SYSCTL->PRPWM & pr_mask) == 0){
-	}
 	PWM = (PWM0_Type*) base;
 	switch(pwm_generator){
 		case 0:

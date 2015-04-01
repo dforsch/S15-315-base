@@ -71,6 +71,7 @@ main(void)
 	char uart[3]; // Place to put uart output
 	int uart_count;
 	char uart_char;
+	int seconds_elapsed = 0;
 	
 	
 	
@@ -80,7 +81,6 @@ main(void)
   uartTxPoll(UART0_BASE,"**************************************\n\r");
   uartTxPoll(UART0_BASE,"* ECE315 Default Project\n\r");
   uartTxPoll(UART0_BASE,"**************************************\n\r");
-	drv8833_leftForward(0);
   // Infinite Loop
   while(1)
   {
@@ -97,15 +97,32 @@ main(void)
 			}
 			AlertSysTick = false;
 			systick_count++;\
-			sprintf(output_string,"Enable %d\n\r",PWM0->_1_CMPA);
-			uartTxPoll(UART0_BASE,output_string);
 		}
 		
 		// Every second, 20000*50uS = 1s
 		if(systick_count >= 20000){
 			systick_count = 0;
 			sprintf(output_string,"Pulse:%03d ADC:%03d UART:%s\n\r", pw_val, adc_val, uart);
-			//uartTxPoll(UART0_BASE,output_string);
+			//uartTxPoll(UART0_BASE,output_string)
+			if(seconds_elapsed < 2){
+				drv8833_leftForward(100);
+				drv8833_rightForward(100);
+			}
+			else if(seconds_elapsed < 4){
+				drv8833_leftReverse(100);
+				drv8833_rightReverse(100);
+			}
+			else if(seconds_elapsed < 9){
+				drv8833_turnLeft(100);
+			}
+			else if(seconds_elapsed < 14){
+				drv8833_turnRight(100);
+			}
+			else{
+				drv8833_leftForward(1);
+				drv8833_rightForward(1);
+			}
+			seconds_elapsed++;
 		}
 		
 		if(systick_count % 200 == 0){
