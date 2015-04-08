@@ -32,6 +32,7 @@
 #include "TM4C123.h"
 #include "boardUtil.h"
 #include "drv8833.h"
+#include "ece315_lab3.h"
 
 
 
@@ -47,6 +48,7 @@ void initializeBoard(void)
 {
   DisableInterrupts();
   serialDebugInit();
+	rfInit();
 	pw_config_gpio();
 	SysTick_Config(2500);
 	initializeADC(ADC0_BASE);
@@ -72,6 +74,9 @@ main(void)
 	int uart_count;
 	char uart_char;
 	int seconds_elapsed = 0;
+	char msg[80];
+	wireless_com_status_t status;
+	uint32_t data;
 	
 	
 	
@@ -84,6 +89,14 @@ main(void)
   // Infinite Loop
   while(1)
   {
+		// Check to see when wireless data arrives
+		status = wireless_get_32(false, &data);
+		if(status == NRF24L01_RX_SUCCESS)
+		{
+			memset(msg,0 ,80);
+			sprintf(msg, "Data RXed: %c%c %d\n\r", data>>24, data>>16, data & 0xFFFF);
+			uartTxPoll(UART0_BASE,msg);
+		}
 		// Every 50uS
 		if(AlertSysTick){
 			pe2_prev = pe2;
