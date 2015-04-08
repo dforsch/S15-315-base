@@ -47,7 +47,7 @@ void  drv8833_gpioInit(void)
 	gpio_config_enable_output(GPIOF_BASE, MTR_N_SLEEP);
 	gpio_config_enable_input(GPIOF_BASE, MTR_N_FAULT);
 	
-	GPIOF->DATA = MTR_N_SLEEP;
+	GPIOF->DATA |= MTR_N_SLEEP;
 
 }
 
