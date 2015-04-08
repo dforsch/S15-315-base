@@ -89,13 +89,33 @@ main(void)
   // Infinite Loop
   while(1)
   {
-		// Check to see when wireless data arrives
+								// Check to see when wireless data arrives
 		status = wireless_get_32(false, &data);
 		if(status == NRF24L01_RX_SUCCESS)
 		{
 			memset(msg,0 ,80);
-			sprintf(msg, "Data RXed: %c%c %d\n\r", data>>24, data>>16, data & 0xFFFF);
+			sprintf(msg, "Data RXed: %c%c %d \r\n", data>>24, data>>16, data & 0xFFFF);
 			uartTxPoll(UART0_BASE,msg);
+			if((data>>24) == 'F'){
+				drv8833_rightForward(data & 0xFFFF);
+				drv8833_leftForward(data & 0xFFFF);
+			}
+			else if((data >> 24) == 'L'){
+				drv8833_turnLeft(data & 0xFFFF);
+			}
+			else if((data >> 24) == 'S'){
+				drv8833_rightForward(1);
+				drv8833_leftForward(1);
+			}
+			else{
+				if(((data >> 16) & 0xFF) == 'V'){
+						drv8833_rightReverse(data & 0xFFFF);
+						drv8833_leftReverse(data & 0xFFFF);
+				}
+				else{
+					drv8833_turnRight(data & 0xFFFF);
+				}
+			}
 		}
 		// Every 50uS
 		if(AlertSysTick){
@@ -109,7 +129,8 @@ main(void)
 				pw_val = count*50/147.;
 			}
 			AlertSysTick = false;
-			systick_count++;\
+			systick_count++;
+			
 		}
 		
 		// Every second, 20000*50uS = 1s
@@ -117,25 +138,8 @@ main(void)
 			systick_count = 0;
 			sprintf(output_string,"Pulse:%03d ADC:%03d UART:%s\n\r", pw_val, adc_val, uart);
 			//uartTxPoll(UART0_BASE,output_string)
-			if(seconds_elapsed < 2){
-				drv8833_leftForward(100);
-				drv8833_rightForward(100);
-			}
-			else if(seconds_elapsed < 4){
-				drv8833_leftReverse(100);
-				drv8833_rightReverse(100);
-			}
-			else if(seconds_elapsed < 9){
-				drv8833_turnLeft(100);
-			}
-			else if(seconds_elapsed < 14){
-				drv8833_turnRight(100);
-			}
-			else{
-				drv8833_leftForward(1);
-				drv8833_rightForward(1);
-			}
 			seconds_elapsed++;
+
 		}
 		
 		if(systick_count % 200 == 0){
@@ -143,6 +147,7 @@ main(void)
 			// inches = V / (9.8mV/in)
 			// V = adc_val / max_val * 5V
 			adc_val = (adc_val+0.0)/(4095/5*.0098);
+
 		}
 		
 		// Every UART interrupt
