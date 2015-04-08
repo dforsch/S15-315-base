@@ -2,8 +2,9 @@
 extern volatile bool AlertSysTick;
 extern volatile bool AlertUart7;
 
-extern volatile int pulseCountLeft;
-extern volatile int pulseCountRight;
+extern volatile int distanceToTravelLeft;
+extern volatile int distanceToTravelRight;
+
 
 // SysTick Handler
 void SysTick_Handler(void)
@@ -26,12 +27,12 @@ void UART7_Handler(void)
 
 void GPIOF_Handler(void)
 {
-	pulseCountLeft++;
+	distanceToTravelLeft--;
 	GPIOF->ICR = 0xFF;
 }
 
 void GPIOC_Handler(void)
 {
-	pulseCountRight++;
+	distanceToTravelRight--;
 	GPIOC->ICR = 0xFF;
 }

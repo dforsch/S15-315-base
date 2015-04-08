@@ -34,6 +34,8 @@
 #include "drv8833.h"
 #include "ece315_lab3.h"
 
+void setDistanceToTravelLeft(int);
+void setDistanceToTravelRight(int);
 
 
 //*****************************************************************************
@@ -41,8 +43,8 @@
 //*****************************************************************************
 volatile bool AlertSysTick;
 volatile bool AlertUart7;
-volatile int pulseCountLeft = 0;
-volatile int pulseCountRight = 0;
+extern volatile int distanceToTravelLeft;
+extern volatile int distanceToTravelRight;
   
 //*****************************************************************************
 //*****************************************************************************
@@ -90,35 +92,50 @@ main(void)
   uartTxPoll(UART0_BASE,"* ECE315 Default Project\n\r");
   uartTxPoll(UART0_BASE,"**************************************\n\r");
   // Infinite Loop
-  while(1)
+	setDistanceToTravelLeft(10);
+	setDistanceToTravelRight(10);
+  while(distanceToTravelLeft > 0)
   {
 								// Check to see when wireless data arrives
+		if(distanceToTravelLeft > 0){
+			drv8833_leftForward(100);
+		}
+		else{
+			drv8833_leftForward(1);
+		}
+		if(distanceToTravelRight > 0){
+			drv8833_rightForward(100);
+		}
+		else{
+			drv8833_rightForward(1);
+		}
+
 		status = wireless_get_32(false, &data);
 		if(status == NRF24L01_RX_SUCCESS)
 		{
 			memset(msg,0 ,80);
 			sprintf(msg, "Data RXed: %c%c %d \r\n", data>>24, data>>16, data & 0xFFFF);
 			//uartTxPoll(UART0_BASE,msg);
-			if((data>>24) == 'F'){
-				drv8833_rightForward(data & 0xFFFF);
-				drv8833_leftForward(data & 0xFFFF);
-			}
-			else if((data >> 24) == 'L'){
-				drv8833_turnLeft(data & 0xFFFF);
-			}
-			else if((data >> 24) == 'S'){
-				drv8833_rightForward(1);
-				drv8833_leftForward(1);
-			}
-			else{
-				if(((data >> 16) & 0xFF) == 'V'){
-						drv8833_rightReverse(data & 0xFFFF);
-						drv8833_leftReverse(data & 0xFFFF);
-				}
-				else{
-					drv8833_turnRight(data & 0xFFFF);
-				}
-			}
+//			if((data>>24) == 'F'){
+//				drv8833_rightForward(data & 0xFFFF);
+//				drv8833_leftForward(data & 0xFFFF);
+//			}
+//			else if((data >> 24) == 'L'){
+//				drv8833_turnLeft(data & 0xFFFF);
+//			}
+//			else if((data >> 24) == 'S'){
+//				drv8833_rightForward(1);
+//				drv8833_leftForward(1);
+//			}
+//			else{
+//				if(((data >> 16) & 0xFF) == 'V'){
+//						drv8833_rightReverse(data & 0xFFFF);
+//						drv8833_leftReverse(data & 0xFFFF);
+//				}
+//				else{
+//					drv8833_turnRight(data & 0xFFFF);
+//				}
+//			}
 		}
 		// Every 50uS
 		if(AlertSysTick){
@@ -150,7 +167,7 @@ main(void)
 			// inches = V / (9.8mV/in)
 			// V = adc_val / max_val * 5V
 			adc_val = (adc_val+0.0)/(4095/5*.0098);
-			sprintf(output_string,"Left: %d Right: %d\n\r", pulseCountLeft, pulseCountRight);
+			sprintf(output_string,"Left: %d Right: %d\n\r", distanceToTravelLeft, distanceToTravelRight);
 			uartTxPoll(UART0_BASE,output_string);
 
 		}
@@ -170,5 +187,7 @@ main(void)
 		}
 		
   }
+		drv8833_rightForward(1);
+  	drv8833_leftForward(1);
 }
 	
