@@ -86,5 +86,26 @@ void pw_config_gpio(void)
 
 	gpio_config_enable_output(GPIOE_BASE, PE4|PE5);
 }
+void encodersInit(){
+	gpio_enable_port(GPIOF_BASE);
+	gpio_config_digital_enable( GPIOF_BASE, PF0 | PF1);
+	gpio_config_enable_input( GPIOF_BASE, PF0 | PF1 );
+	gpio_enable_port(GPIOC_BASE);
+	gpio_config_digital_enable( GPIOC_BASE, PC5 | PC6 );
+	gpio_config_enable_input( GPIOC_BASE, PC5 | PC6 );
+	GPIOF->IM = 0;
+	GPIOF->IS = 0;
+  GPIOF->IBE |= PF0 | PF1;
+	GPIOF->RIS = 0xFF;
+	GPIOF->IM |= PF0 | PF1;
+	GPIOC->IM = 0;
+	GPIOC->IS = 0;
+  GPIOC->IBE |= PC5 | PC6;
+	GPIOC->RIS = 0xFF;
+	GPIOC->IM |= PC5 | PC6;
+	NVIC_SetPriority(GPIOF_IRQn, 1);
+	NVIC_SetPriority(GPIOC_IRQn, 1);
+	NVIC_EnableIRQ(GPIOF_IRQn);
+	NVIC_EnableIRQ(GPIOC_IRQn);
 
-
+}

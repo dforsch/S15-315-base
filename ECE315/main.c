@@ -41,6 +41,8 @@
 //*****************************************************************************
 volatile bool AlertSysTick;
 volatile bool AlertUart7;
+volatile int pulseCountLeft = 0;
+volatile int pulseCountRight = 0;
   
 //*****************************************************************************
 //*****************************************************************************
@@ -53,6 +55,7 @@ void initializeBoard(void)
 	SysTick_Config(2500);
 	initializeADC(ADC0_BASE);
 	drv8833_gpioInit();
+	encodersInit();
   EnableInterrupts();
 }
 
@@ -95,7 +98,7 @@ main(void)
 		{
 			memset(msg,0 ,80);
 			sprintf(msg, "Data RXed: %c%c %d \r\n", data>>24, data>>16, data & 0xFFFF);
-			uartTxPoll(UART0_BASE,msg);
+			//uartTxPoll(UART0_BASE,msg);
 			if((data>>24) == 'F'){
 				drv8833_rightForward(data & 0xFFFF);
 				drv8833_leftForward(data & 0xFFFF);
@@ -147,6 +150,8 @@ main(void)
 			// inches = V / (9.8mV/in)
 			// V = adc_val / max_val * 5V
 			adc_val = (adc_val+0.0)/(4095/5*.0098);
+			sprintf(output_string,"Left: %d Right: %d\n\r", pulseCountLeft, pulseCountRight);
+			uartTxPoll(UART0_BASE,output_string);
 
 		}
 		

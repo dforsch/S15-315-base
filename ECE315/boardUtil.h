@@ -125,5 +125,6 @@ void i2cInit(void);
 void DisableInterrupts(void);
 void EnableInterrupts(void);
 void pw_config_gpio(void);
+void encodersInit(void);
 
 #endif
