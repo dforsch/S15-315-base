@@ -45,6 +45,7 @@ volatile bool AlertSysTick;
 volatile bool AlertUart7;
 extern volatile int distanceToTravelLeft;
 extern volatile int distanceToTravelRight;
+volatile char uart[4] = "R00"; // Place to put uart output
   
 //*****************************************************************************
 //*****************************************************************************
@@ -75,9 +76,7 @@ main(void)
 	bool pe2_prev;
 	char output_string[50];
 	int adc_val; //value read by adc
-	char uart[3]; // Place to put uart output
-	int uart_count;
-	char uart_char;
+
 	int seconds_elapsed = 0;
 	char msg[80];
 	wireless_com_status_t status;
@@ -92,23 +91,8 @@ main(void)
   uartTxPoll(UART0_BASE,"* ECE315 Default Project\n\r");
   uartTxPoll(UART0_BASE,"**************************************\n\r");
   // Infinite Loop
-	setDistanceToTravelLeft(10);
-	setDistanceToTravelRight(10);
-  while(distanceToTravelLeft > 0)
+  while(true)
   {
-								// Check to see when wireless data arrives
-		if(distanceToTravelLeft > 0){
-			drv8833_leftForward(100);
-		}
-		else{
-			drv8833_leftForward(1);
-		}
-		if(distanceToTravelRight > 0){
-			drv8833_rightForward(100);
-		}
-		else{
-			drv8833_rightForward(1);
-		}
 
 		status = wireless_get_32(false, &data);
 		if(status == NRF24L01_RX_SUCCESS)
@@ -161,6 +145,12 @@ main(void)
 			seconds_elapsed++;
 
 		}
+		if(AlertUart7){
+			// Every UART interrupt
+			AlertUart7 = false;
+			sprintf(output_string,"UART:%s\n\r",uart);
+			uartTxPoll(UART0_BASE, output_string);
+		}
 		
 		if(systick_count % 200 == 0){
 			adc_val = getADCValue(ADC0_BASE, 0);
@@ -168,26 +158,10 @@ main(void)
 			// V = adc_val / max_val * 5V
 			adc_val = (adc_val+0.0)/(4095/5*.0098);
 			sprintf(output_string,"Left: %d Right: %d\n\r", distanceToTravelLeft, distanceToTravelRight);
-			uartTxPoll(UART0_BASE,output_string);
+			//uartTxPoll(UART0_BASE,output_string);
 
 		}
 		
-		// Every UART interrupt
-		if(AlertUart7)
-		{
-			AlertUart7 = false;
-			uart_char = uartRxPoll(UART7_BASE,true);
-			if(uart_char == 'R' || uart_char == '\r'){
-				uart_count = 0;
-			}
-			else{
-				uart[uart_count] = uart_char;
-				uart_count = (uart_count + 1) % 3;
-			}
-		}
-		
   }
-		drv8833_rightForward(1);
-  	drv8833_leftForward(1);
 }
 	
