@@ -33,6 +33,7 @@
 #include "boardUtil.h"
 #include "drv8833.h"
 #include "ece315_lab3.h"
+#include "lcd.h"
 
 void setDistanceToTravelLeft(int);
 void setDistanceToTravelRight(int);
@@ -53,6 +54,7 @@ void initializeBoard(void)
 {
   DisableInterrupts();
   serialDebugInit();
+	ece315_lcdInit();
 	rfInit();
 	pw_config_gpio();
 	SysTick_Config(2500);
@@ -85,7 +87,8 @@ main(void)
 	
 	
   initializeBoard();
-
+	
+	ece315_lcdWriteChar(1,40, 1);
   uartTxPoll(UART0_BASE, "\n\r");
   uartTxPoll(UART0_BASE,"**************************************\n\r");
   uartTxPoll(UART0_BASE,"* ECE315 Default Project\n\r");

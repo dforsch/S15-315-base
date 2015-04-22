@@ -429,6 +429,21 @@
               <FileType>1</FileType>
               <FilePath>.\ece315_lab3.c</FilePath>
             </File>
+            <File>
+              <FileName>encoders.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\encoders.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>fonts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\fonts.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

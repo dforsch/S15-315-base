@@ -23,6 +23,7 @@
 #include "spi.h"
 #include "../include/sysctrl.h"
 
+
 /****************************************************************************
  * This routine transmits a character out the SPI1 port.
  ****************************************************************************/
@@ -174,4 +175,9 @@ void spiTx(uint32_t base, uint8_t *tx_data, int num_bytes, uint8_t *rx_data)
     *rx_data =  mySSI->DR;
     rx_data++;
   }
+}
+
+
+bool InitializeSPI(SPI_CONFIG* config){
+	return initialize_spi(config->BaseAddr, 3);
 }

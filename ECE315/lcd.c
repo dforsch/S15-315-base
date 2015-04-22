@@ -1,6 +1,11 @@
 #include "lcd.h"
+#include "../include/gpioPort.h"
 #include "../include/spi.h"
+#include "../include/fonts.h"
 
+
+	uint8_t dataIn[2];
+	uint8_t dataOut[2];
 
 //*****************************************************************************
 // Initializes the pins needed to communicate with the LCD and issues the 
@@ -28,39 +33,96 @@ SPI_CONFIG LCD_config = {
     DISABLED,                   //RxDMAEn
   };
   
+	gpio_enable_port(LCD_GPIO_BASE);
 
   // Configure SPI CLK
-  gpioConfigDigitalEnable(LCD_GPIO_BASE, LCD_CLK_PIN);
-  gpioConfigAltFunction(LCD_GPIO_BASE, LCD_CLK_PIN);
-  gpioConfigPortConfig(LCD_GPIO_BASE, LCD_CLK_PIN_PCTL);
+  gpio_config_digital_enable(LCD_GPIO_BASE, LCD_CLK_PIN);
+  gpio_config_alternate_function(LCD_GPIO_BASE, LCD_CLK_PIN);
+  gpio_config_port_control(LCD_GPIO_BASE, LCD_CLK_PIN_PCTL);
     
   // Configure SPI CS
-  gpioConfigDigitalEnable(LCD_GPIO_BASE, LCD_CS_PIN);
-  gpioConfigAltFunction(LCD_GPIO_BASE, LCD_CS_PIN);
-  gpioConfigPortConfig(LCD_GPIO_BASE, LCD_CS_PIN_PCTL);
+  gpio_config_digital_enable(LCD_GPIO_BASE, LCD_CS_PIN);
+	gpio_config_enable_output(LCD_GPIO_BASE, LCD_CS_PIN);
+  //gpio_config_alternate_function(LCD_GPIO_BASE, LCD_CS_PIN);
+  //gpio_config_port_control(LCD_GPIO_BASE, LCD_CS_PIN_PCTL);
 
   // Configure SPI MOSI
-  gpioConfigDigitalEnable(LCD_GPIO_BASE, LCD_MOSI_PIN);
-  gpioConfigAltFunction(LCD_GPIO_BASE, LCD_MOSI_PIN);
-  gpioConfigPortConfig(LCD_GPIO_BASE, LCD_MOSI_PIN_PCTL);
+  gpio_config_digital_enable(LCD_GPIO_BASE, LCD_MOSI_PIN);
+  gpio_config_alternate_function(LCD_GPIO_BASE, LCD_MOSI_PIN);
+  gpio_config_port_control(LCD_GPIO_BASE, LCD_MOSI_PIN_PCTL);
   
   // Configure CD
-  gpioConfigDigitalEnable(GPIO_LCD_CD_BASE,LCD_CD_PIN);
-  gpioConfigPinAsOutput(GPIO_LCD_CD_BASE,LCD_CD_PIN);
+  gpio_config_digital_enable(GPIO_LCD_CD_BASE,LCD_CD_PIN);
+  gpio_config_enable_output(GPIO_LCD_CD_BASE,LCD_CD_PIN);
   
   // Configure RST_N
-  gpioConfigDigitalEnable(GPIO_LCD_RST_N_BASE, LCD_RST_N_PIN);
-  gpioConfigPinAsOutput(GPIO_LCD_RST_N_BASE, LCD_RST_N_PIN);
+  gpio_config_digital_enable(GPIO_LCD_RST_N_BASE, LCD_RST_N_PIN);
+  gpio_config_enable_output(GPIO_LCD_RST_N_BASE, LCD_RST_N_PIN);
   
   InitializeSPI(&LCD_config);
   
-  
   // Bring the LCD out of reset
-  
+	GPIOD->DATA |= LCD_RST_N_PIN;
+  GPIOD->DATA &= ~LCD_CD_PIN;
+	GPIOD->DATA |= LCD_CS_PIN;
   // Use spiTx() from the ece315 driver library to issue the sequence of 
-  // commands in the LCD data sheet to initialize the LCD.  
-  
-  
+  // commands in the LCD data sheet to initialize the LCD.
+	GPIOD->DATA &= ~LCD_CS_PIN;
+  dataIn[0] = 0x40;  
+  spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
+	GPIOD->DATA &= ~LCD_CS_PIN;
+	dataIn[0] = 0xA1;  
+  spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
+	GPIOD->DATA &= ~LCD_CS_PIN;
+	dataIn[0] = 0xC0;  
+  spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
+	GPIOD->DATA &= ~LCD_CS_PIN;
+	dataIn[0] = 0xA4;  
+  spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
+	GPIOD->DATA &= ~LCD_CS_PIN;
+	dataIn[0] = 0xA6;  
+  spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
+	GPIOD->DATA &= ~LCD_CS_PIN;
+	dataIn[0] = 0xA2;  
+  spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
+	GPIOD->DATA &= ~LCD_CS_PIN;
+	dataIn[0] = 0x2F;  
+  spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
+	GPIOD->DATA &= ~LCD_CS_PIN;
+	dataIn[0] = 0x27;  
+  spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
+	GPIOD->DATA &= ~LCD_CS_PIN;
+	dataIn[0] = 0x81;  
+  spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
+	GPIOD->DATA &= ~LCD_CS_PIN;
+	dataIn[0] = 0x10;  
+  spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
+	GPIOD->DATA &= ~LCD_CS_PIN;
+	dataIn[0] = 0xFA;  
+  spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
+	GPIOD->DATA &= ~LCD_CS_PIN;
+	dataIn[0] = 0x90;  
+  spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
+	GPIOD->DATA &= ~LCD_CS_PIN;
+	dataIn[0] = 0xAF;  
+  spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
+	GPIOD->DATA &= ~LCD_CS_PIN;
+	dataIn[0] = 0xA4;
+	spiTx(SSI3_BASE, dataIn, 2, dataOut);
+	GPIOD->DATA |= LCD_CS_PIN;
 }
 
  //****************************************************************************
@@ -68,7 +130,10 @@ SPI_CONFIG LCD_config = {
 //*****************************************************************************
   void ece315_lcdSetPage(uint8_t   page)
   {
-    
+      GPIOD->DATA &= ~LCD_CS_PIN;
+			dataIn[0] = 0xB0 | (page & 0x0F);
+			spiTx(SSI3_BASE, dataIn, 2, dataOut);
+			GPIOD->DATA |= LCD_CS_PIN;
   }
   
 //*****************************************************************************
@@ -76,7 +141,12 @@ SPI_CONFIG LCD_config = {
 //*****************************************************************************
 void ece315_lcdSetColumn(uint8_t   column)
 {
-  
+      GPIOD->DATA &= ~LCD_CS_PIN;
+			dataIn[0] = 0x00 | (column & 0x0F);
+			spiTx(SSI3_BASE, dataIn, 2, dataOut);
+			dataIn[0] = 0x01 | (column & 0xF0);
+			spiTx(SSI3_BASE, dataIn, 2, dataOut);
+			GPIOD->DATA |= LCD_CS_PIN;  
 }
   
 //*****************************************************************************
@@ -84,7 +154,12 @@ void ece315_lcdSetColumn(uint8_t   column)
 //*****************************************************************************
   void ece315_lcdWriteData(uint8_t   data)
   {
-    
+		  GPIOD->DATA |= LCD_CD_PIN;
+      GPIOD->DATA &= ~LCD_CS_PIN;
+			dataIn[0] = data;
+			spiTx(SSI3_BASE, dataIn, 2, dataOut);
+			GPIOD->DATA |= LCD_CS_PIN;
+      GPIOD->DATA &= ~LCD_CD_PIN;    
   }
   
 //*****************************************************************************
@@ -92,7 +167,14 @@ void ece315_lcdSetColumn(uint8_t   column)
 //*****************************************************************************
  void ece315_lcdClear(void)
  {
-   
+	 int i,j;
+	 for(i=0;i<8;i++){
+		 ece315_lcdSetPage(i);
+		 for(j=0;j<101;j++){
+			 ece315_lcdSetColumn(j);
+			 ece315_lcdWriteData(0xAA);
+		 }
+	 }
  }
 
 //*****************************************************************************
@@ -106,7 +188,21 @@ void ece315_lcdSetColumn(uint8_t   column)
 //*****************************************************************************
 void ece315_lcdWriteChar( uint8_t page, char c, uint8_t colStart)
  {
-   
+	 uint8_t data;
+	 int i;
+	 ece315_lcdSetPage(page);
+	 for(i=0; i<10; i++){
+		data = courierNew_10ptBitmaps[c*20+i];
+		ece315_lcdSetColumn(colStart+i);
+		ece315_lcdWriteData(data);
+	 }
+	 ece315_lcdSetPage(page+1);
+	 for(i=0; i<10; i++){
+		data = courierNew_10ptBitmaps[c*21+i];
+		ece315_lcdSetColumn(colStart+i);
+		ece315_lcdWriteData(data);
+	 }
+	 
  }
  
 //*****************************************************************************
@@ -116,6 +212,9 @@ void ece315_lcdWriteChar( uint8_t page, char c, uint8_t colStart)
 //*****************************************************************************
 void ece315_lcdWriteString( uint8_t line, char *string)
 {
-  
+  int i;
+	for(i=0; (i<10)&&(string[i] != 0); i++){
+			ece315_lcdWriteChar(line, string[i], i*10);
+	}
 }  
 
