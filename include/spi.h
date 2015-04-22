@@ -1,35 +1,13 @@
-// Copyright (c) 2014, Joe Krachey
-// All rights reserved.
-//
-// Redistribution and use in binary form, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-// 1. Redistributions in binary form must reproduce the above copyright 
-//    notice, this list of conditions and the following disclaimer in 
-//    the documentation and/or other materials provided with the distribution.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
-// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
-// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
-// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
-// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
-// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 /************************************************************************/
 /* FILE NAME    - SPI.h                                                 */
-/* AUTHOR       - Joe Krachey                                           */
+/* AUTHOR       - ECE353 Staff                                          */
 /* DATE CREATED - 24-Jun-2013                                           */
 /* DESCRIPTION  - Header file for SPI.c                                 */
 /*                                                                      */
 /* (c) ECE Department, University of Wisconsin - Madison                */
 /************************************************************************/
-#ifndef __ECE453_SPI_H__
-#define __ECE453_SPI_H__
+#ifndef __SPI_H__
+#define __SPI_H__
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -197,25 +175,29 @@
                                             // PLL output (default)
 #define SSI_CC_CS_PIOSC         0x00000005  // PIOSC
 
+typedef struct {
+	uint32_t		BaseAddr;
+  uint8_t     EndOfTransEn;           // Enable/Disable
+  uint8_t     MasSlvSelect;           // Enable/Disable
+  uint8_t     SSIEnable;              // Enable/Disable
+  uint8_t     LoopbackModeEn;         // Enable/Disable
+  uint8_t     ClkPrescaleDiv;        	// Divide SysClk by this value
+  uint8_t     SerialCPHA;             // SSI_SPH_X
+  uint8_t     SerialCPOL;             // SSI_SPO_X
+  uint8_t     FrameFormatSelect;      // SSI_CR0_FRF_X
+  uint8_t     DataSizeSelect;         // SSI_CR0_DSS_X
+  uint8_t     TxFifoIntMask;          // Enable/Disable
+  uint8_t     RxFifoIntMask;          // Enable/Disable
+  uint8_t     RxTimeoutIntMask;       // Enable/Disable
+  uint8_t     RxOverrunIntMask;       // Enable/Disable
+  uint8_t     TxDMAEn;                // Enable/Disable
+  uint8_t     RxDMAEn;                // Enable/Disable
+} SPI_CONFIG;
 
 
-//*****************************************************************************
-// Function Prototypes
-//*****************************************************************************
-
-//*****************************************************************************
-// Configure the given SPI peripheral to be 5Mhz and the given SPI mode
-//*****************************************************************************
-bool initialize_spi( uint32_t base_addr, uint8_t spi_mode);
-
-
-//*****************************************************************************
-// Transmits the array of bytes found at txData to the specified SPI peripheral
-// The number of bytes transmitted is determined by numBytes.
-//
-// The data received by the SPI ternimal is placed in an array of bytes 
-// starting at the address found at rxData
-//*****************************************************************************
-void spiTx(uint32_t base, uint8_t *tx_data, int num_bytes, uint8_t *rx_data);
+/* Private function prototypes -----------------------------------------*/
+bool InitializeSPI(SPI_CONFIG *init);
+bool spiVerifyBaseAddr(uint32_t base);
+void spiTx(uint32_t base, uint8_t *dataIn, int size, uint8_t *dataOut);
 
 #endif
