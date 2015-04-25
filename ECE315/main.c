@@ -88,7 +88,10 @@ main(void)
 	
   initializeBoard();
 	
-	ece315_lcdWriteChar(1,40, 1);
+	ece315_lcdClear();
+	ece315_lcdSetPage(1);
+	ece315_lcdSetColumn(0);
+	ece315_lcdWriteString(1,"ABCD");
   uartTxPoll(UART0_BASE, "\n\r");
   uartTxPoll(UART0_BASE,"**************************************\n\r");
   uartTxPoll(UART0_BASE,"* ECE315 Default Project\n\r");
@@ -97,11 +100,11 @@ main(void)
   while(true)
   {
 
-		status = wireless_get_32(false, &data);
-		if(status == NRF24L01_RX_SUCCESS)
-		{
-			memset(msg,0 ,80);
-			sprintf(msg, "Data RXed: %c%c %d \r\n", data>>24, data>>16, data & 0xFFFF);
+//		status = wireless_get_32(false, &data);
+//		if(status == NRF24L01_RX_SUCCESS)
+//		{
+//			memset(msg,0 ,80);
+//			sprintf(msg, "Data RXed: %c%c %d \r\n", data>>24, data>>16, data & 0xFFFF);
 			//uartTxPoll(UART0_BASE,msg);
 //			if((data>>24) == 'F'){
 //				drv8833_rightForward(data & 0xFFFF);
@@ -123,48 +126,48 @@ main(void)
 //					drv8833_turnRight(data & 0xFFFF);
 //				}
 //			}
-		}
+//		}
 		// Every 50uS
-		if(AlertSysTick){
-			pe2_prev = pe2;
-			pe2 = GPIOE->DATA & PE2;
-			if(pe2 && !pe2_prev){
-				count = 0;
-			}
-			count++;
-			if(!pe2 && pe2_prev){
-				pw_val = count*50/147.;
-			}
-			AlertSysTick = false;
-			systick_count++;
-			
-		}
-		
-		// Every second, 20000*50uS = 1s
-		if(systick_count >= 20000){
-			systick_count = 0;
-			sprintf(output_string,"Pulse:%03d ADC:%03d UART:%s\n\r", pw_val, adc_val, uart);
-			//uartTxPoll(UART0_BASE,output_string)
-			seconds_elapsed++;
+//		if(AlertSysTick){
+//			pe2_prev = pe2;
+//			pe2 = GPIOE->DATA & PE2;
+//			if(pe2 && !pe2_prev){
+//				count = 0;
+//			}
+//			count++;
+//			if(!pe2 && pe2_prev){
+//				pw_val = count*50/147.;
+//			}
+//			AlertSysTick = false;
+//			systick_count++;
+//			
+//		}
+//		
+//		// Every second, 20000*50uS = 1s
+//		if(systick_count >= 20000){
+//			systick_count = 0;
+//			sprintf(output_string,"Pulse:%03d ADC:%03d UART:%s\n\r", pw_val, adc_val, uart);
+//			//uartTxPoll(UART0_BASE,output_string)
+//			seconds_elapsed++;
 
-		}
-		if(AlertUart7){
-			// Every UART interrupt
-			AlertUart7 = false;
-			sprintf(output_string,"UART:%s\n\r",uart);
-			uartTxPoll(UART0_BASE, output_string);
-		}
-		
-		if(systick_count % 200 == 0){
-			adc_val = getADCValue(ADC0_BASE, 0);
-			// inches = V / (9.8mV/in)
-			// V = adc_val / max_val * 5V
-			adc_val = (adc_val+0.0)/(4095/5*.0098);
-			sprintf(output_string,"Left: %d Right: %d\n\r", distanceToTravelLeft, distanceToTravelRight);
-			//uartTxPoll(UART0_BASE,output_string);
+//		}
+//		if(AlertUart7){
+//			// Every UART interrupt
+//			AlertUart7 = false;
+//			sprintf(output_string,"UART:%s\n\r",uart);
+//			uartTxPoll(UART0_BASE, output_string);
+//		}
+//		
+//		if(systick_count % 200 == 0){
+//			adc_val = getADCValue(ADC0_BASE, 0);
+//			// inches = V / (9.8mV/in)
+//			// V = adc_val / max_val * 5V
+//			adc_val = (adc_val+0.0)/(4095/5*.0098);
+//			sprintf(output_string,"Left: %d Right: %d\n\r", distanceToTravelLeft, distanceToTravelRight);
+//			//uartTxPoll(UART0_BASE,output_string);
 
-		}
-		
+//		}
+//		
   }
 }
 	
