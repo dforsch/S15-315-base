@@ -168,8 +168,8 @@ void ece315_lcdWriteChar( uint8_t page, char c, uint8_t colStart)
 	 }
 	 ece315_lcdSetPage(page+1);
 	 for(i=10; i<20; i++){
-		data = courierNew_10ptBitmaps[c*20];
-		ece315_lcdSetColumn(colStart+i);
+		data = courierNew_10ptBitmaps[c*20+i];
+		ece315_lcdSetColumn(colStart+i-10);
 		ece315_lcdWriteData(data);
 	 }
 	 
